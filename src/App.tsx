@@ -1,27 +1,37 @@
 import './index.scss';
 import {useState} from "react";
-import {Modal} from "./components/Modal";
+import {Game} from "./components/Game";
+import {questions} from "./questions";
+import {Result} from "./components/Result";
 
 function App() {
-  const [open, setOpen] = useState<boolean>(false)
+  const [step, setStep] = useState(0)
+  const [correctAnswer, setCorrectAnswer] = useState(0)
 
-  const onClickOpen = () => {
-    setOpen(true)
+  const question = questions[step]
+
+  const onClickVariant = (correct: number) => {
+    setStep(step + 1)
+
+    if (question.correct === correct) {
+      setCorrectAnswer(correctAnswer + 1)
+    }
   }
 
-  const onClickClose = () => {
-    setOpen(false)
+  const restartQuiz = () => {
+    setStep(0)
+    setCorrectAnswer(0)
   }
-
 
   return (
     <div className="App">
-      <button className="open-modal-btn" onClick={onClickOpen}>✨ Открыть окно</button>
-      <Modal open={open} onClickClose={onClickClose}>
-        <img src="https://media2.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif" alt={'img'}/>
-        <h3>Modal Window</h3>
-      </Modal>
+      {questions.length !== step
+        ? <Game question={question}
+                step={step}
+                onClickVariant={onClickVariant}/>
 
+        : <Result correctAnswer={correctAnswer} restartQuiz={restartQuiz}/>
+      }
     </div>
   );
 }
