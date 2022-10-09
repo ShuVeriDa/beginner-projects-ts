@@ -1,25 +1,29 @@
 import './index.scss';
 import {useState} from "react";
+import {Modal} from "./components/Modal";
 
 function App() {
-  const [count, setCount] = useState<number>(0)
+  const [open, setOpen] = useState<boolean>(false)
 
-  const onClickIncrement = () => {
-    setCount(count + 1)
+  const onClickOpen = () => {
+    setOpen(true)
   }
-  const onClickDecrement = () => {
-    setCount(count - 1)
+
+  const onClickClose = () => {
+    setOpen(false)
   }
-   return (
-     <div className="App">
-       <div>
-         <h2>Счетчик:</h2>
-         <h1>{count}</h1>
-         <button className="minus" onClick={onClickDecrement}  disabled={count === 0}>- Минус</button>
-         <button className="plus" onClick={onClickIncrement}>Плюс +</button>
-       </div>
-     </div>
-   );
+
+
+  return (
+    <div className="App">
+      <button className="open-modal-btn" onClick={onClickOpen}>✨ Открыть окно</button>
+      <Modal open={open} onClickClose={onClickClose}>
+        <img src="https://media2.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif" alt={'img'}/>
+        <h3>Modal Window</h3>
+      </Modal>
+
+    </div>
+  );
 }
 
 export default App;
