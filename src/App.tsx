@@ -1,37 +1,71 @@
+import React, {ChangeEvent, useEffect, useState} from 'react';
+import {Users} from './components/Users';
 import './index.scss';
-import {useState} from "react";
-import {Game} from "./components/Game";
-import {questions} from "./questions";
-import {Result} from "./components/Result";
+import {Success} from "./components/Success";
+
+// Тут список пользователей: https://reqres.in/api/users
+
+export type UsersType = {
+  avatar: string
+  email: string
+  first_name: string
+  id: number
+  last_name: string
+}
 
 function App() {
-  const [step, setStep] = useState(0)
-  const [correctAnswer, setCorrectAnswer] = useState(0)
+  const [users, setUsers] = useState<UsersType[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchValue, setSearchValue] = useState('')
+  const [invites, setInvites] = useState<number[]>([])
+  const [success, setSuccess] = useState(false)
 
-  const question = questions[step]
+  useEffect(() => {
+    fetch('https://reqres.in/api/users')
+      .then(res => res.json())
+      .then(res => setUsers(res.data))
+      .catch((error) => {
+          console.warn(error)
+          alert('Ошибка при получении данных')
+        }
+      )
+      .finally(() => setIsLoading(false))
+  }, [])
 
-  const onClickVariant = (correct: number) => {
-    setStep(step + 1)
+  console.log(searchValue)
 
-    if (question.correct === correct) {
-      setCorrectAnswer(correctAnswer + 1)
+  const onChangeSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.currentTarget.value)
+  }
+
+  const onClickInvites = (id: number) => {
+    if (invites.includes(id)) {
+      setInvites(prev => prev.filter(_id  => _id !== id))
+    } else {
+      setInvites(prev => [...prev, id])
     }
   }
 
-  const restartQuiz = () => {
-    setStep(0)
-    setCorrectAnswer(0)
+  const onClickInvite = () => {
+    setSuccess(true)
   }
+  console.log(invites)
 
   return (
     <div className="App">
-      {questions.length !== step
-        ? <Game question={question}
-                step={step}
-                onClickVariant={onClickVariant}/>
 
-        : <Result correctAnswer={correctAnswer} restartQuiz={restartQuiz}/>
+      {success
+        ? <Success count={invites.length}/>
+        : <Users items={users}
+                 isLoading={isLoading}
+                 searchValue={searchValue}
+                 onChangeSearchValue={onChangeSearchValue}
+                 invites={invites}
+                 onClickInvites={onClickInvites}
+                 onClickInvite={onClickInvite}
+        />
       }
+
     </div>
   );
 }
