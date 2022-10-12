@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.scss';
 import {Counter} from "./projects/Counter/Counter";
+import { Quiz } from './projects/Quiz/Quiz';
 import {UsersInvite} from "./projects/Users/UsersInvite";
 
 
@@ -12,7 +13,7 @@ const root = ReactDOM.createRoot(
 );
   root.render(
     <React.StrictMode>
-      <UsersInvite />
+      <Quiz />
     </React.StrictMode>,
   );
 
