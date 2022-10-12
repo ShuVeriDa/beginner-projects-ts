@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 import './index.scss';
+import {Counter} from "./projects/Counter/Counter";
+import {UsersInvite} from "./projects/Users/UsersInvite";
 
 
 const root = ReactDOM.createRoot(
@@ -10,7 +12,7 @@ const root = ReactDOM.createRoot(
 );
   root.render(
     <React.StrictMode>
-      <App />
+      <UsersInvite />
     </React.StrictMode>,
   );
 
