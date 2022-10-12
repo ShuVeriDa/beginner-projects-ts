@@ -1,11 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-
-import App from './App';
 import './index.scss';
-import {Counter} from "./projects/Counter/Counter";
-import { Quiz } from './projects/Quiz/Quiz';
-import {UsersInvite} from "./projects/Users/UsersInvite";
+import {Photos} from './projects/Photos/Photos';
 
 
 const root = ReactDOM.createRoot(
@@ -13,7 +9,7 @@ const root = ReactDOM.createRoot(
 );
   root.render(
     <React.StrictMode>
-      <Quiz />
+      <Photos />
     </React.StrictMode>,
   );
 
