@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.scss';
 import {Photos} from './projects/Photos/Photos';
+import {ModalWindow} from "./projects/Modal/ModalWindow";
 
 
 const root = ReactDOM.createRoot(
@@ -9,7 +10,7 @@ const root = ReactDOM.createRoot(
 );
   root.render(
     <React.StrictMode>
-      <Photos />
+      <ModalWindow />
     </React.StrictMode>,
   );
 
