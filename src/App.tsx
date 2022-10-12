@@ -1,54 +1,83 @@
 import React, {useEffect, useState} from 'react';
-import { Block } from './Block';
-import './index.scss';
 import axios from "axios";
+import {Collection} from "./Collection";
 
-//https://cdn.cur.su/api/latest.json
-export type RatesType = {
-  [key: string]: number
+import './index.scss';
+
+const categories = [
+  {name: "Все"},
+  {name: "Море"},
+  {name: "Горы"},
+  {name: "Архитектура"},
+  {name: "Города"}
+]
+
+type ImagesType = {
+  category: number
+  name: string
+  photos: string[]
 }
 
 function App() {
-  const [fromCurrency, setFromCurrency] = useState("RUB")
-  const [toCurrency, setToCurrency] = useState("USD")
-  const [fromPrice, setFromPrice] = useState(0)
-  const [toPrice, setToPrice] = useState(0)
+  const [images, setImages] = useState<ImagesType[]>([])
+  const [choose, setChoose] = useState<number>(0)
+  const [isLoading, setLoading] = useState<boolean>(true)
+  const [searchValue, setSearchValue] = useState('')
+  const [page, setPage] = useState(1)
 
-  const [rates, setRates] = useState<RatesType>({})
+  const categoryId = choose > 0 ? choose : ''
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       try {
-        const res = await axios.get('https://cdn.cur.su/api/latest.json')
-        setRates(res.data)
-      }
-      catch (error) {
+        const res = await axios.get(`https://630a32f93249910032824d12.mockapi.io/photos?page=${page}&limit=3&category=${categoryId}`)
+        setImages(res.data)
+      } catch (error) {
         console.warn(error)
-        alert('Не удалось получить валюты')
+        alert('Не удалось получить фотографии')
+      } finally {
+        setLoading(false)
       }
     }
+
     fetchData()
-  }, [])
+  }, [choose, page])
 
-  const onChangeFromPrice = (value: number) => {
-    const price = value / rates[toCurrency]
-    const result = price * rates[toCurrency]
-    setToPrice(result)
-    setFromPrice(value)
-  }
-
-  const onChangeToPrice = (value: number) => {
-    const result = (rates[fromCurrency] / rates[toCurrency]) * value
-    setFromPrice(result)
-    setToPrice(value)
-  }
-
-  console.log(rates)
+  console.log(searchValue)
 
   return (
     <div className="App">
-      <Block value={fromPrice} currency={fromCurrency} onChangeCurrency={setFromCurrency} onChangeValue={onChangeFromPrice} />
-      <Block value={toPrice} currency={toCurrency} onChangeCurrency={setToCurrency} onChangeValue={onChangeToPrice} />
+      <h1>Моя коллекция фотографий</h1>
+      <div className="top">
+        <ul className="tags">
+          {categories.map((cat, i) => {
+            return <li key={cat.name}
+                       className={choose === i ? 'active' : ''}
+                       onClick={() => setChoose(i)}>
+              {cat.name}
+            </li>
+          })}
+        </ul>
+        <input value={searchValue} onChange={(e) => setSearchValue(e.currentTarget.value)} className="search-input"
+               placeholder="Поиск по названию"/>
+      </div>
+      <div className="content">
+        {isLoading
+          ? <h2>Идет загрузка ... </h2>
+          : images.filter(obj => obj.name.toLowerCase().includes(searchValue.toLowerCase()))
+            .map((obj, i) => <Collection key={i} name={obj.name} images={obj.photos}/>)
+        }
+      </div>
+      <ul className="pagination">
+        {[...Array(5)].map((_, i) => <li key={i}
+                                           onClick={() => setPage(i + 1)}
+                                           className={page === i + 1 ? "active" : ''}
+        >
+          {i + 1}
+        </li>)
+        }
+      </ul>
     </div>
   );
 }
